@@ -1,7 +1,7 @@
 {
-  "board": {
-    "name": "Mini-Projet – Tic-Tac-Toe",
-    "lists": [
+  "name": "Mini-Projet – Tic-Tac-Toe",
+  "labels": [],
+  "lists": [
       {
         "name": "Planning & Design",
         "cards": [
@@ -100,5 +100,4 @@
         ]
       }
     ]
-  }
 }

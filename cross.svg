@@ -1,0 +1,27 @@
+<svg
+  class="ttt-cross"
+  width="120"
+  height="120"
+  viewBox="0 0 120 120"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <line
+    x1="20"
+    y1="20"
+    x2="100"
+    y2="100"
+    stroke="currentColor"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+  <line
+    x1="100"
+    y1="20"
+    x2="20"
+    y2="100"
+    stroke="currentColor"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+</svg>
