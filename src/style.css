@@ -254,11 +254,17 @@ body::-webkit-scrollbar {
     font-size: x-large;
     border: 1px solid var(--border);
     background-color: var(--card);
+    box-shadow: 5px 5px var(--chart-2);
+  }
+    button:active {
+    box-shadow: 5px 5px var(--chart-3);
+    scale: 0.95;
   }
 
   .buttons {
     display: flex;
     gap: 1rem;
+
   }
 
   .winner-label {

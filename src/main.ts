@@ -8,6 +8,8 @@ function fire_confetti() {
   });
 }
 
+const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement
+const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement
 let cross = document
   .querySelector<SVGElement>(".ttt-cross")!
   .cloneNode(true) as SVGAElement;
@@ -155,6 +157,8 @@ function get_starting_player() {
   return Math.random() < 0.5 ? "X" : "O";
 }
 function mark_cell(cell: HTMLElement, player: string) {
+  draw_sfx.currentTime = 0
+  draw_sfx.play()
   cell.style.cursor = "not-allowed";
   if (player === "O") {
     player_1.style.opacity = "0.7";
@@ -195,6 +199,8 @@ function check_winner(
     combo.every((num) => path.includes(num))
   );
   if (has_combination) {
+    win_sfx.currentTime = 0
+    win_sfx.play()
     disable_all_cells();
     if (player === "O") {
       player_1_score_value += 1;
