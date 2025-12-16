@@ -110,7 +110,9 @@ body::-webkit-scrollbar {
 
 
 .logo {
-  font-size: clamp(1rem, 10vw, 6rem);
+  /* font-size: clamp(1rem, 10vw, 6rem); */
+  font-size: clamp(2rem, 14vw, 8rem);
+
   font-family: var(--font-bt);
   text-align: center;
 }
@@ -144,7 +146,6 @@ body::-webkit-scrollbar {
 }
 
 
-/* game */
 .players-scores {
   margin: auto;
   display: flex;
@@ -249,7 +250,7 @@ body::-webkit-scrollbar {
 
   button {
     margin: auto;
-    width: fit-content;
+    min-width: 8rem;
     font-family: var(--font-bt);
     font-size: x-large;
     border: 1px solid var(--border);
@@ -264,7 +265,7 @@ body::-webkit-scrollbar {
   .buttons {
     display: flex;
     gap: 1rem;
-
+    
   }
 
   .winner-label {
@@ -289,3 +290,54 @@ body::-webkit-scrollbar {
     background-repeat: no-repeat;
   }
 }
+@media (max-width: 480px) {
+  .logo {
+    font-size: clamp(2rem, 14vw, 3.5rem);
+  }
+
+  .game-menu {
+    margin-top: 18vh;
+  }
+
+  .game-menu button {
+    font-size: 1.5rem;
+    padding: 0.75rem 2rem;
+  }
+
+  /* scores */
+  .players-scores {
+    width: 90vw;
+    font-size: 1rem;
+  }
+
+  .players-scores div {
+    padding: 0.4rem;
+  }
+
+
+  .cell-container {
+    width: 85vw;
+    height: 85vw;
+    gap: 0.4rem;
+    padding: 0.4rem;
+  }
+
+
+  .container {
+    padding: 1.5rem;
+    width: 90vw;
+  }
+
+  .container .buttons {
+    flex-direction: column;
+  }
+
+  .container button {
+    font-size: 1.2rem;
+  }
+
+  .winner-label {
+    font-size: 1.5rem;
+  }
+}
+

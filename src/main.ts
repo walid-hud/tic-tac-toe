@@ -228,10 +228,12 @@ async function check_winner(player: "O" | "X", path: number[]) {
 
 function highlight_win(combination:number[]){
 	const winning_cells = combination.map(index => cells[index]);
+	// I'm using a promise here so I can await the animation to finish before playing the sound effects 
+	// and showing the result 
 	return new Promise((res)=>{
 		gsap.fromTo(winning_cells , 
-			{scale:1.2 ,backgroundColor:"yellow", duration:1 , ease:"bounce.inOut" , stagger:0.1} ,
-			{scale:1 ,backgroundColor:"var(--secondary)" ,duration:0.5, onComplete:res})
+			{scale:1.2 ,backgroundColor:"yellow", duration:0.3, ease:"bounce.inOut" , stagger:{amount:0.1}} ,
+			{scale:1 ,backgroundColor:"var(--secondary)" ,duration:0.3, ease:"bounce.inOut", stagger:{amount:0.1}, onComplete:res})
 	
 	})
 }
