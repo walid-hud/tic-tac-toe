@@ -34,9 +34,28 @@ const cells = document.querySelectorAll<HTMLElement>(".cell")!;
 
 const result_modal = document.querySelector<HTMLElement>(".result-modal")!;
 gsap.set(result_modal, { opacity: 0, scale: 0 });
+const winner_label = document.querySelector<HTMLElement>(".winner-label")!;
+const winner_icon = document.querySelector<HTMLElement>(".winner")!;
+const result_score = document.querySelector<HTMLElement>(".result-score")!;
+const winner_label_p1 = winner_label.querySelector<HTMLElement>("p:first-child")!;
+const winner_label_p2 = winner_label.querySelector<HTMLElement>("p:last-child")!;
 
 function show_result(winner: string, score: number) {
-  fire_confetti();
+  if (winner === "draw") {
+    // Handle draw state
+    winner_label_p1.textContent = "It's";
+    winner_label_p2.textContent = "a draw!";
+    winner_icon.style.display = "none";
+    result_score.textContent = "-";
+  } else {
+    fire_confetti();
+    winner_label_p1.textContent = "player";
+    winner_label_p2.textContent = "won";
+    winner_icon.setAttribute("data-mark", winner);
+    winner_icon.style.display = "block";
+    result_score.textContent = score.toString();
+  }
+  
   gsap.to(result_modal, {
     scale: 1,
     opacity: 1,
@@ -60,9 +79,12 @@ const winning_combinations = [
 let player_1_score_value = 0;
 let player_2_score_value = 0;
 start_btn.addEventListener("click", start_game);
+reset_btn.addEventListener("click", reset_game);
+continue_btn.addEventListener("click", continue_game);
 let player_1_path: number[] = [];
 let player_2_path: number[] = [];
 let current_player: "O" | "X";
+let cell_click_handlers: ((this: HTMLElement, ev: MouseEvent) => void)[] = [];
 function start_game() {
   game_menu.style.display = "none";
   game_container.style.display = "grid";
@@ -72,18 +94,25 @@ function start_game() {
   } else {
     player_1.style.opacity = "0.7";
   }
+  // remove old event listeners first
   cells.forEach((cell, index) => {
-    cell.addEventListener("click", function handle_click() {
+    if (cell_click_handlers[index]) {
+      cell.removeEventListener("click", cell_click_handlers[index]);
+    }
+  });
+  cell_click_handlers = [];
+  
+  cells.forEach((cell, index) => {
+    const handle_click = function() {
+  
       if (cell.dataset.mark) {
         return;
       }
       mark_cell(cell, current_player);
-    });
+    };
+    cell_click_handlers[index] = handle_click;
+    cell.addEventListener("click", handle_click);
   });
-
-  reset_btn.addEventListener("click", reset_game);
-
-  continue_btn.addEventListener("click", continue_game);
 }
 
 function reset_game() {
@@ -107,15 +136,13 @@ function reset_game() {
 }
 function continue_game() {
   cells.forEach((cell) => {
-    cell.removeEventListener("click", () => {});
-    cell.setAttribute("cellIndex", "");
     cell.dataset.mark = "";
     cell.style.cursor = "pointer";
   });
   player_1_path = [];
   player_2_path = [];
-  player_1_score.textContent = "0";
-  player_2_score.textContent = "0";
+  player_1_score.textContent = player_1_score_value.toString();
+  player_2_score.textContent = player_2_score_value.toString();
   result_modal.style.backdropFilter = " none";
   gsap.to(result_modal, {
     scale: 0,
@@ -136,7 +163,7 @@ function mark_cell(cell: HTMLElement, player: string) {
     const cell_index = parseInt(cell.getAttribute("cellIndex")!);
     player_1_path.push(cell_index);
     current_player = "X";
-    check_winner("O", player_1_path, player_1_score, player_1_score_value);
+    check_winner("O", player_1_path);
   }
   if (player === "X") {
     player_2.style.opacity = "0.7";
@@ -145,24 +172,41 @@ function mark_cell(cell: HTMLElement, player: string) {
     const cell_index = parseInt(cell.getAttribute("cellIndex")!);
     player_2_path.push(cell_index);
     current_player = "O";
-    check_winner("X", player_2_path, player_2_score, player_2_score_value);
+    check_winner("X", player_2_path);
   }
+}
+
+function disable_all_cells() {
+  cells.forEach((cell) => {
+    cell.style.cursor = "not-allowed";
+    cell.dataset.mark = cell.dataset.mark || "disabled";
+  });
 }
 
 function check_winner(
   player: "O" | "X",
-  path: number[],
-  score_element: HTMLElement,
-  current_score: number
+  path: number[]
 ) {
-  const has_combination = winning_combinations.some((combo) =>
+  /* 
+  the type of "clever" code you write while half-asleep just 
+  to forget what it does in the next day 🫩
+  */
+   const has_combination = winning_combinations.some((combo) =>
     combo.every((num) => path.includes(num))
   );
   if (has_combination) {
-    current_score += 1;
-    score_element.textContent = current_score.toString();
-    show_result(player, current_score);
+    disable_all_cells();
+    if (player === "O") {
+      player_1_score_value += 1;
+      player_1_score.textContent = player_1_score_value.toString();
+      show_result(player, player_1_score_value);
+    } else {
+      player_2_score_value += 1;
+      player_2_score.textContent = player_2_score_value.toString();
+      show_result(player, player_2_score_value);
+    }
   } else if (player_1_path.length + player_2_path.length === 9) {
+    disable_all_cells();
     show_result("draw", 0);
   }
   return;
