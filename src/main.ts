@@ -8,8 +8,8 @@ function fire_confetti() {
   });
 }
 
-const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement
-const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement
+const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
+const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
 let cross = document
   .querySelector<SVGElement>(".ttt-cross")!
   .cloneNode(true) as SVGAElement;
@@ -39,8 +39,10 @@ gsap.set(result_modal, { opacity: 0, scale: 0 });
 const winner_label = document.querySelector<HTMLElement>(".winner-label")!;
 const winner_icon = document.querySelector<HTMLElement>(".winner")!;
 const result_score = document.querySelector<HTMLElement>(".result-score")!;
-const winner_label_p1 = winner_label.querySelector<HTMLElement>("p:first-child")!;
-const winner_label_p2 = winner_label.querySelector<HTMLElement>("p:last-child")!;
+const winner_label_p1 =
+  winner_label.querySelector<HTMLElement>("p:first-child")!;
+const winner_label_p2 =
+  winner_label.querySelector<HTMLElement>("p:last-child")!;
 
 function show_result(winner: string, score: number) {
   if (winner === "draw") {
@@ -57,7 +59,7 @@ function show_result(winner: string, score: number) {
     winner_icon.style.display = "block";
     result_score.textContent = score.toString();
   }
-  
+
   gsap.to(result_modal, {
     scale: 1,
     opacity: 1,
@@ -103,10 +105,9 @@ function start_game() {
     }
   });
   cell_click_handlers = [];
-  
+
   cells.forEach((cell, index) => {
-    const handle_click = function() {
-  
+    const handle_click = function () {
       if (cell.dataset.mark) {
         return;
       }
@@ -157,8 +158,8 @@ function get_starting_player() {
   return Math.random() < 0.5 ? "X" : "O";
 }
 function mark_cell(cell: HTMLElement, player: string) {
-  draw_sfx.currentTime = 0
-  draw_sfx.play()
+  draw_sfx.currentTime = 0;
+  draw_sfx.play();
   cell.style.cursor = "not-allowed";
   if (player === "O") {
     player_1.style.opacity = "0.7";
@@ -187,20 +188,27 @@ function disable_all_cells() {
   });
 }
 
-function check_winner(
-  player: "O" | "X",
-  path: number[]
-) {
+async function check_winner(player: "O" | "X", path: number[]) {
   /* 
-  the type of "clever" code you write while half-asleep just 
-  to forget what it does in the next day 🫩
+  so, we just find the winning combo, 
   */
-   const has_combination = winning_combinations.some((combo) =>
+  let winning_row: number[] = [];
+
+  const winning_combo = winning_combinations.find((combo) =>
     combo.every((num) => path.includes(num))
   );
+
+  if (winning_combo) {
+    winning_row = [...winning_combo];
+  }
+
+  const has_combination = Boolean(winning_combo);
+
   if (has_combination) {
-    win_sfx.currentTime = 0
-    win_sfx.play()
+	await highlight_win(winning_row)
+    win_sfx.currentTime = 0;
+    win_sfx.play();
+
     disable_all_cells();
     if (player === "O") {
       player_1_score_value += 1;
@@ -216,4 +224,14 @@ function check_winner(
     show_result("draw", 0);
   }
   return;
+}
+
+function highlight_win(combination:number[]){
+	const winning_cells = combination.map(index => cells[index]);
+	return new Promise((res)=>{
+		gsap.fromTo(winning_cells , 
+			{scale:1.2 ,backgroundColor:"yellow", duration:1 , ease:"bounce.inOut" , stagger:0.1} ,
+			{scale:1 ,backgroundColor:"var(--secondary)" ,duration:0.5, onComplete:res})
+	
+	})
 }
