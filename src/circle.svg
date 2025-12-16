@@ -10,7 +10,7 @@
     cx="60"
     cy="60"
     r="40"
-    stroke="currentColor"
+    stroke="greenyellow"
     stroke-width="10"
     stroke-linecap="round"
   />
