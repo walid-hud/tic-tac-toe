@@ -1,4 +1,5 @@
-# **tic tac toe**
+![screenshot](./public/Screenshot.png)
+
 This is a simple implementation of the game using vanilla javascript ( even though I actually used typescript).
 
 This project focuses on core concepts of DOM manipulation and event handling.
