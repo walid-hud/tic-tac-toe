@@ -37,7 +37,7 @@ const cells = document.querySelectorAll<HTMLElement>(".cell")!;
 const result_modal = document.querySelector<HTMLElement>(".result-modal")!;
 gsap.set(result_modal, { opacity: 0, scale: 0 });
 const winner_label = document.querySelector<HTMLElement>(".winner-label")!;
-const winner_icon = document.querySelector<HTMLElement>(".winner")!;
+const winner_icon = document.querySelector<HTMLElement>(".winner-icon")!;
 const result_score = document.querySelector<HTMLElement>(".result-score")!;
 const winner_label_p1 =
   winner_label.querySelector<HTMLElement>("p:first-child")!;

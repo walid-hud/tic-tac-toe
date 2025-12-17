@@ -7,6 +7,8 @@ function fire_confetti() {
         origin: { y: 0.6 },
     });
 }
+const draw_sfx = document.querySelector("#pencil-sfx");
+const win_sfx = document.querySelector("#win-sfx");
 let cross = document
     .querySelector(".ttt-cross")
     .cloneNode(true);
@@ -31,7 +33,7 @@ const cells = document.querySelectorAll(".cell");
 const result_modal = document.querySelector(".result-modal");
 gsap.set(result_modal, { opacity: 0, scale: 0 });
 const winner_label = document.querySelector(".winner-label");
-const winner_icon = document.querySelector(".winner");
+const winner_icon = document.querySelector(".winner-icon");
 const result_score = document.querySelector(".result-score");
 const winner_label_p1 = winner_label.querySelector("p:first-child");
 const winner_label_p2 = winner_label.querySelector("p:last-child");
@@ -147,6 +149,8 @@ function get_starting_player() {
     return Math.random() < 0.5 ? "X" : "O";
 }
 function mark_cell(cell, player) {
+    draw_sfx.currentTime = 0;
+    draw_sfx.play();
     cell.style.cursor = "not-allowed";
     if (player === "O") {
         player_1.style.opacity = "0.7";
@@ -173,13 +177,20 @@ function disable_all_cells() {
         cell.dataset.mark = cell.dataset.mark || "disabled";
     });
 }
-function check_winner(player, path) {
+async function check_winner(player, path) {
     /*
-    the type of "clever" code you write while half-asleep just
-    to forget what it does in the next day 🫩
+    so, we just find the winning combo,
     */
-    const has_combination = winning_combinations.some((combo) => combo.every((num) => path.includes(num)));
+    let winning_row = [];
+    const winning_combo = winning_combinations.find((combo) => combo.every((num) => path.includes(num)));
+    if (winning_combo) {
+        winning_row = [...winning_combo];
+    }
+    const has_combination = Boolean(winning_combo);
     if (has_combination) {
+        await highlight_win(winning_row);
+        win_sfx.currentTime = 0;
+        win_sfx.play();
         disable_all_cells();
         if (player === "O") {
             player_1_score_value += 1;
@@ -197,4 +208,12 @@ function check_winner(player, path) {
         show_result("draw", 0);
     }
     return;
+}
+function highlight_win(combination) {
+    const winning_cells = combination.map(index => cells[index]);
+    // I'm using a promise here so I can await the animation to finish before playing the sound effects 
+    // and showing the result 
+    return new Promise((res) => {
+        gsap.fromTo(winning_cells, { scale: 1.2, backgroundColor: "yellow", duration: 0.3, ease: "bounce.inOut", stagger: { amount: 0.1 } }, { scale: 1, backgroundColor: "var(--secondary)", duration: 0.3, ease: "bounce.inOut", stagger: { amount: 0.1 }, onComplete: res });
+    });
 }
