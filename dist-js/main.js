@@ -9,6 +9,7 @@ function fire_confetti() {
 }
 const draw_sfx = document.querySelector("#pencil-sfx");
 const win_sfx = document.querySelector("#win-sfx");
+const click_sfx = document.querySelector("#click-sfx");
 let cross = document
     .querySelector(".ttt-cross")
     .cloneNode(true);
@@ -82,6 +83,8 @@ let player_2_path = [];
 let current_player;
 let cell_click_handlers = [];
 function start_game() {
+    click_sfx.currentTime = 0;
+    click_sfx.play();
     game_menu.style.display = "none";
     game_container.style.display = "grid";
     current_player = get_starting_player();
@@ -110,6 +113,8 @@ function start_game() {
     });
 }
 function reset_game() {
+    click_sfx.currentTime = 0;
+    click_sfx.play();
     cells.forEach((cell) => {
         cell.dataset.mark = "";
         cell.style.cursor = "pointer";
@@ -129,6 +134,8 @@ function reset_game() {
     start_game();
 }
 function continue_game() {
+    click_sfx.currentTime = 0;
+    click_sfx.play();
     cells.forEach((cell) => {
         cell.dataset.mark = "";
         cell.style.cursor = "pointer";
