@@ -10,6 +10,7 @@ function fire_confetti() {
 
 const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
 const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
+const click_sfx = document.querySelector("#click-sfx")! as HTMLAudioElement;
 let cross = document
   .querySelector<SVGElement>(".ttt-cross")!
   .cloneNode(true) as SVGAElement;
@@ -90,6 +91,8 @@ let player_2_path: number[] = [];
 let current_player: "O" | "X";
 let cell_click_handlers: ((this: HTMLElement, ev: MouseEvent) => void)[] = [];
 function start_game() {
+  click_sfx.currentTime = 0;
+  click_sfx.play();
   game_menu.style.display = "none";
   game_container.style.display = "grid";
   current_player = get_starting_player();
@@ -119,6 +122,8 @@ function start_game() {
 }
 
 function reset_game() {
+  click_sfx.currentTime = 0;
+  click_sfx.play();
   cells.forEach((cell) => {
     cell.dataset.mark = "";
     cell.style.cursor = "pointer";
@@ -138,6 +143,8 @@ function reset_game() {
   start_game();
 }
 function continue_game() {
+  click_sfx.currentTime = 0;
+  click_sfx.play();
   cells.forEach((cell) => {
     cell.dataset.mark = "";
     cell.style.cursor = "pointer";
