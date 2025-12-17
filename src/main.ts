@@ -56,7 +56,7 @@ function show_result(winner: string, score: number) {
     fire_confetti();
     winner_label_p1.textContent = "player";
     winner_label_p2.textContent = "won";
-    winner_icon.setAttribute("data-mark", winner);
+    winner_icon.dataset.mark = winner;
     winner_icon.style.display = "block";
     result_score.textContent = score.toString();
   }

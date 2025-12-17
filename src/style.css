@@ -258,14 +258,14 @@ body::-webkit-scrollbar {
     font-family: var(--font-marker);
     font-size: xx-large;
   }
-  .winner[data-mark="O"] {
+  .winner-icon[data-mark="O"] {
     background-image: url("./circle.svg");
   }
 
-  .winner[data-mark="X"] {
+  .winner-icon[data-mark="X"] {
     background-image: url("./cross.svg");
   }
-  .winner {
+  .winner-icon {
     margin-top: 5px;
     width: 2rem;
     height: 2rem;
