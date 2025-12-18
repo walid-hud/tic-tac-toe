@@ -1,16 +1,11 @@
 import { confetti } from "@tsparticles/confetti";
 import { gsap } from "gsap";
-function fire_confetti() {
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 },
-  });
-}
 
+// get sound effects
 const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
 const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
 const click_sfx = document.querySelector("#click-sfx")! as HTMLAudioElement;
+// clone cross and circle SVGs for further use
 let cross = document
   .querySelector<SVGElement>(".ttt-cross")!
   .cloneNode(true) as SVGAElement;
@@ -21,12 +16,13 @@ cross.style.position = "absolute";
 circle.style.position = "absolute";
 cross.style.top = "-10px";
 circle.style.top = "-10px";
+
+// rest of html
 const game_menu = document.querySelector<HTMLElement>(".game-menu")!;
 const start_btn = document.querySelector<HTMLButtonElement>(".start-button")!;
 const continue_btn =
   document.querySelector<HTMLButtonElement>(".continue-btn")!;
 const reset_btn = document.querySelector<HTMLButtonElement>(".reset-btn")!;
-
 const game_container = document.querySelector<HTMLElement>(".game")!;
 game_container.style.display = "none";
 const player_1 = document.querySelector<HTMLElement>(".player-1")!;
@@ -34,7 +30,6 @@ const player_1_score = document.querySelector<HTMLElement>(".player-1-score")!;
 const player_2 = document.querySelector<HTMLElement>(".player-2")!;
 const player_2_score = document.querySelector<HTMLElement>(".player-2-score")!;
 const cells = document.querySelectorAll<HTMLElement>(".cell")!;
-
 const result_modal = document.querySelector<HTMLElement>(".result-modal")!;
 gsap.set(result_modal, { opacity: 0, scale: 0 });
 const winner_label = document.querySelector<HTMLElement>(".winner-label")!;
@@ -47,13 +42,17 @@ const winner_label_p2 =
 
 function show_result(winner: string, score: number) {
   if (winner === "draw") {
-    // Handle draw state
     winner_label_p1.textContent = "It's";
     winner_label_p2.textContent = "a draw!";
     winner_icon.style.display = "none";
     result_score.textContent = "-";
   } else {
-    fire_confetti();
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+
     winner_label_p1.textContent = "player";
     winner_label_p2.textContent = "won";
     winner_icon.dataset.mark = winner;
@@ -190,29 +189,26 @@ function mark_cell(cell: HTMLElement, player: string) {
 
 function disable_all_cells() {
   cells.forEach((cell) => {
-    cell.style.cursor = "not-allowed";
+    cell.style.cursor = "not-allowed"; // not actually disabled 
     cell.dataset.mark = cell.dataset.mark || "disabled";
   });
 }
 
 async function check_winner(player: "O" | "X", path: number[]) {
-  /* 
-  so, we just find the winning combo, 
-  */
   let winning_row: number[] = [];
-
   const winning_combo = winning_combinations.find((combo) =>
     combo.every((num) => path.includes(num))
   );
 
   if (winning_combo) {
-    winning_row = [...winning_combo];
+    winning_row = winning_combo;
   }
 
   const has_combination = Boolean(winning_combo);
 
   if (has_combination) {
-	await highlight_win(winning_row)
+    // since animations are async by default, I wrapped the highlight animation in a promise to add some delay 
+    await highlight_win(winning_row);
     win_sfx.currentTime = 0;
     win_sfx.play();
 
@@ -233,14 +229,28 @@ async function check_winner(player: "O" | "X", path: number[]) {
   return;
 }
 
-function highlight_win(combination:number[]){
-	const winning_cells = combination.map(index => cells[index]);
-	// I'm using a promise here so I can await the animation to finish before playing the sound effects 
-	// and showing the result 
-	return new Promise((res)=>{
-		gsap.fromTo(winning_cells , 
-			{scale:1.2 ,backgroundColor:"yellow", duration:0.3, ease:"bounce.inOut" , stagger:{amount:0.1}} ,
-			{scale:1 ,backgroundColor:"var(--secondary)" ,duration:0.3, ease:"bounce.inOut", stagger:{amount:0.1}, onComplete:res})
-	
-	})
+function highlight_win(combination: number[]) {
+  const winning_cells = combination.map((index) => cells[index]);
+  // I'm using a promise here so I can await the animation to finish before playing the sound effects
+  // and showing the result
+  return new Promise((res) => {
+    gsap.fromTo(
+      winning_cells,
+      {
+        scale: 1.2,
+        backgroundColor: "yellow",
+        duration: 0.3,
+        ease: "bounce.inOut",
+        stagger: { amount: 0.1 },
+      },
+      {
+        scale: 1,
+        backgroundColor: "var(--secondary)",
+        duration: 0.3,
+        ease: "bounce.inOut",
+        stagger: { amount: 0.1 },
+        onComplete: res,
+      }
+    );
+  });
 }
