@@ -87,8 +87,12 @@ reset_btn.addEventListener("click", reset_game);
 continue_btn.addEventListener("click", continue_game);
 let player_1_path: number[] = [];
 let player_2_path: number[] = [];
+
+
+
 let current_player: "O" | "X";
-let cell_click_handlers: ((this: HTMLElement, ev: MouseEvent) => void)[] = [];
+// this stores the click event handler functions so that we can remove them later  
+let cell_click_handlers :any[] = [];
 function start_game() {
   click_sfx.currentTime = 0;
   click_sfx.play();
@@ -100,7 +104,7 @@ function start_game() {
   } else {
     player_1.style.opacity = "0.7";
   }
-  // remove old event listeners first
+  // remove old event listeners, this prevents duplicate function calls
   cells.forEach((cell, index) => {
     if (cell_click_handlers[index]) {
       cell.removeEventListener("click", cell_click_handlers[index]);
@@ -117,6 +121,9 @@ function start_game() {
     };
     cell_click_handlers[index] = handle_click;
     cell.addEventListener("click", handle_click);
+    cell.addEventListener("click", handle_click);
+    cell.addEventListener("click", handle_click);
+    
   });
 }
 
