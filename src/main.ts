@@ -5,7 +5,10 @@ import { gsap } from "gsap";
 const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
 const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
 const click_sfx = document.querySelector("#click-sfx")! as HTMLAudioElement;
-
+function play_sound(audio : HTMLAudioElement){
+  audio.currentTime = 0;
+  audio.play()
+}
 
 
 
@@ -84,8 +87,7 @@ let current_player: "O" | "X";
 // this stores the click event handler functions so that we can remove them later  
 let cell_click_handlers :any[] = [];
 function start_game() {
-  click_sfx.currentTime = 0;
-  click_sfx.play();
+  play_sound(click_sfx)
   game_menu.style.display = "none";
   game_container.style.display = "grid";
   current_player = get_starting_player();
@@ -116,8 +118,7 @@ function start_game() {
 }
 
 function reset_game() {
-  click_sfx.currentTime = 0;
-  click_sfx.play();
+  play_sound(click_sfx)
   cells.forEach((cell) => {
     cell.dataset.mark = "";
     cell.style.cursor = "pointer";
@@ -137,8 +138,7 @@ function reset_game() {
   start_game();
 }
 function continue_game() {
-  click_sfx.currentTime = 0;
-  click_sfx.play();
+  play_sound(click_sfx)
   cells.forEach((cell) => {
     cell.dataset.mark = "";
     cell.style.cursor = "pointer";
@@ -159,8 +159,7 @@ function get_starting_player() {
   return Math.random() < 0.5 ? "X" : "O";
 }
 function mark_cell(cell: HTMLElement, player: string) {
-  draw_sfx.currentTime = 0;
-  draw_sfx.play();
+  play_sound(draw_sfx)
   cell.style.cursor = "not-allowed";
   if (player === "O") {
     player_1.style.opacity = "0.7";
@@ -205,9 +204,7 @@ async function check_winner(player: "O" | "X", path: number[]) {
   if (has_combination) {
     // since animations are async by default, I wrapped the highlight animation in a promise to add some delay 
     await highlight_win(winning_row);
-    win_sfx.currentTime = 0;
-    win_sfx.play();
-
+    play_sound(win_sfx) 
     disable_all_cells();
     if (player === "O") {
       player_1_score_value += 1;
