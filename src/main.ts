@@ -1,15 +1,25 @@
 import { confetti } from "@tsparticles/confetti";
 import { gsap } from "gsap";
+let current_player: "O" | "X" ; 
 
-//sound effects
+//sound effects and helper functions
 const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
 const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
 const click_sfx = document.querySelector("#click-sfx")! as HTMLAudioElement;
-function play_sound(audio : HTMLAudioElement){
+async function play_sound(audio : HTMLAudioElement){
   audio.currentTime = 0;
-  audio.play()
+  return audio.play()
 }
-
+function update_player_opacity(){
+  if (current_player === "O") {
+    player_1.style.opacity = "0.7";
+    player_2.style.opacity = "1";
+  } else {
+    player_2.style.opacity = "0.7";
+    player_1.style.opacity = "1";
+  }
+  return
+}
 
 
 // game elements
@@ -83,7 +93,6 @@ let player_2_path: number[] = [];
 
 
 
-let current_player: "O" | "X";
 // this stores the click event handler functions so that we can remove them later  
 let cell_click_handlers :any[] = [];
 function start_game() {
@@ -91,11 +100,7 @@ function start_game() {
   game_menu.style.display = "none";
   game_container.style.display = "grid";
   current_player = get_starting_player();
-  if (current_player === "O") {
-    player_2.style.opacity = "0.7";
-  } else {
-    player_1.style.opacity = "0.7";
-  }
+  update_player_opacity()
   // remove old event listeners, this prevents duplicate function calls
   cells.forEach((cell, index) => {
     if (cell_click_handlers[index]) {
@@ -110,7 +115,7 @@ function start_game() {
       if (cell.dataset.mark) {
         return;
       }
-      mark_cell(cell, current_player);
+      mark_cell(cell);
     };
     cell_click_handlers[index] = handle_click;
     cell.addEventListener("click", handle_click);
@@ -158,34 +163,30 @@ function continue_game() {
 function get_starting_player() {
   return Math.random() < 0.5 ? "X" : "O";
 }
-function mark_cell(cell: HTMLElement, player: string) {
+function mark_cell(cell: HTMLElement) {
   play_sound(draw_sfx)
+  update_player_opacity()
   cell.style.cursor = "not-allowed";
-  if (player === "O") {
-    player_1.style.opacity = "0.7";
-    player_2.style.opacity = "1";
+  if (current_player === "O") {
     cell.dataset.mark = "O";
     const cell_index = parseInt(cell.getAttribute("cellIndex")!);
     player_1_path.push(cell_index);
     current_player = "X";
-    check_winner("O", player_1_path);
+    check_winner(current_player, player_1_path);
   }
-  if (player === "X") {
-    player_2.style.opacity = "0.7";
-    player_1.style.opacity = "1";
+  else{
     cell.dataset.mark = "X";
     const cell_index = parseInt(cell.getAttribute("cellIndex")!);
     player_2_path.push(cell_index);
     current_player = "O";
-    check_winner("X", player_2_path);
+    check_winner(current_player, player_2_path);
   }
 }
 
 function disable_all_cells() {
   cells.forEach((cell) => {
-    // cell.style.cursor = "not-allowed"; // not actually disabled 
     cell.style.pointerEvents = "none"
-    cell.dataset.mark = cell.dataset.mark || "disabled";
+    cell.dataset.mark = cell.dataset.mark ;
   });
 }
 
@@ -203,9 +204,9 @@ async function check_winner(player: "O" | "X", path: number[]) {
 
   if (has_combination) {
     // since animations are async by default, I wrapped the highlight animation in a promise to add some delay 
+    disable_all_cells();
     await highlight_win(winning_row);
     play_sound(win_sfx) 
-    disable_all_cells();
     if (player === "O") {
       player_1_score_value += 1;
       player_1_score.textContent = player_1_score_value.toString();
@@ -232,14 +233,14 @@ function highlight_win(combination: number[]) {
       {
         scale: 1.2,
         backgroundColor: "yellow",
-        duration: 1,
+        duration: 0.1,
         ease: "bounce.inOut",
         stagger: { amount: 0.1 },
       },
       {
         scale: 1,
         backgroundColor: "var(--secondary)",
-        duration:1,
+        duration:0.1,
         ease: "bounce.inOut",
         stagger: { amount: 0.1 },
         onComplete: res,
