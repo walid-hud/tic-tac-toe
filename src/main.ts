@@ -1,23 +1,15 @@
 import { confetti } from "@tsparticles/confetti";
 import { gsap } from "gsap";
 
-// get sound effects
+//sound effects
 const draw_sfx = document.querySelector("#pencil-sfx")! as HTMLAudioElement;
 const win_sfx = document.querySelector("#win-sfx")! as HTMLAudioElement;
 const click_sfx = document.querySelector("#click-sfx")! as HTMLAudioElement;
-// clone cross and circle SVGs for further use
-let cross = document
-  .querySelector<SVGElement>(".ttt-cross")!
-  .cloneNode(true) as SVGAElement;
-let circle = document
-  .querySelector<SVGElement>(".ttt-circle")!
-  .cloneNode(true) as SVGAElement;
-cross.style.position = "absolute";
-circle.style.position = "absolute";
-cross.style.top = "-10px";
-circle.style.top = "-10px";
 
-// rest of html
+
+
+
+// game elements
 const game_menu = document.querySelector<HTMLElement>(".game-menu")!;
 const start_btn = document.querySelector<HTMLButtonElement>(".start-button")!;
 const continue_btn =
@@ -35,10 +27,8 @@ gsap.set(result_modal, { opacity: 0, scale: 0 });
 const winner_label = document.querySelector<HTMLElement>(".winner-label")!;
 const winner_icon = document.querySelector<HTMLElement>(".winner-icon")!;
 const result_score = document.querySelector<HTMLElement>(".result-score")!;
-const winner_label_p1 =
-  winner_label.querySelector<HTMLElement>("p:first-child")!;
-const winner_label_p2 =
-  winner_label.querySelector<HTMLElement>("p:last-child")!;
+const winner_label_p1 = winner_label.querySelector<HTMLElement>("p:first-child")!;
+const winner_label_p2 = winner_label.querySelector<HTMLElement>("p:last-child")!;
 
 function show_result(winner: string, score: number) {
   if (winner === "draw") {
@@ -113,6 +103,7 @@ function start_game() {
   cell_click_handlers = [];
 
   cells.forEach((cell, index) => {
+    cell.style.pointerEvents = "auto"
     const handle_click = function () {
       if (cell.dataset.mark) {
         return;
@@ -121,9 +112,6 @@ function start_game() {
     };
     cell_click_handlers[index] = handle_click;
     cell.addEventListener("click", handle_click);
-    cell.addEventListener("click", handle_click);
-    cell.addEventListener("click", handle_click);
-    
   });
 }
 
@@ -196,7 +184,8 @@ function mark_cell(cell: HTMLElement, player: string) {
 
 function disable_all_cells() {
   cells.forEach((cell) => {
-    cell.style.cursor = "not-allowed"; // not actually disabled 
+    // cell.style.cursor = "not-allowed"; // not actually disabled 
+    cell.style.pointerEvents = "none"
     cell.dataset.mark = cell.dataset.mark || "disabled";
   });
 }
@@ -246,14 +235,14 @@ function highlight_win(combination: number[]) {
       {
         scale: 1.2,
         backgroundColor: "yellow",
-        duration: 0.3,
+        duration: 1,
         ease: "bounce.inOut",
         stagger: { amount: 0.1 },
       },
       {
         scale: 1,
         backgroundColor: "var(--secondary)",
-        duration: 0.3,
+        duration:1,
         ease: "bounce.inOut",
         stagger: { amount: 0.1 },
         onComplete: res,
